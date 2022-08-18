@@ -52,7 +52,7 @@ typedef struct
     uint32_t startTimeMs;           /* Timer value at the begining of logic changing */
     uint32_t actionTimeMs;          /* Timer counter for current logic state status */
     uint32_t activeTimeMs;          /* Timer counter for recent active logic state status */
-    uint32_t deactiveTimeMs;        /* Timer counter for recent deactive logic state status */
+    uint32_t inactiveTimeMs;        /* Timer counter for recent deactive logic state status */
     uint16_t endActionTimeMs;       /* Timer value to detect an action was finished */
     uint16_t debounceTimeMs;        /* Setting value to remove noise effect */
     uint16_t clickTimeMs;           /* Setting value to detect a click action */

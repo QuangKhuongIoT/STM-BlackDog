@@ -37,7 +37,7 @@ uint32_t inputGetActiveTime(myButton* button) {
 }
 
 uint32_t inputGetDeactiveTime(myButton* button) {
-    return button->_proccessInfo.deactiveTimeMs;
+    return button->_proccessInfo.inactiveTimeMs;
 }
 
 void inputConfig(myButton* button, uint8_t activeLevel, v_callbackFunc inputInit, u8_callbackFunc getInputStatus, u32_callbackFunc getCurrentTickMs) {
@@ -74,6 +74,7 @@ void inputTick(myButton* button) {
 
     if (button->_inputInfo.status.logicState == button->_inputInfo.status.activeLevel) {
         if (button->_proccessInfo.actionTimeMs > button->_proccessInfo.debounceTimeMs) {
+            button->_proccessInfo.activeTimeMs = button->_proccessInfo.actionTimeMs;
             if (button->_proccessInfo.logicLastState != button->_inputInfo.status.logicState) {
                 button->_proccessInfo.logicLastState = button->_inputInfo.status.logicState;
                 button->_proccessInfo.multiClickCounter++;
@@ -108,6 +109,7 @@ void inputTick(myButton* button) {
     } else {
         if (button->_proccessInfo.actionTimeMs > button->_proccessInfo.debounceTimeMs) {
             button->_proccessInfo.logicLastState = button->_inputInfo.status.logicState;
+            button->_proccessInfo.inactiveTimeMs = button->_proccessInfo.actionTimeMs;
             if (button->_proccessInfo.actionTimeMs > button->_proccessInfo.endActionTimeMs) {
                 button->_proccessInfo.lastMultiClickCounter = button->_proccessInfo.multiClickCounter;
                 button->_proccessInfo.multiClickCounter = 0;
