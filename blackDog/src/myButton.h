@@ -92,6 +92,10 @@ void inputSetDebounce(myButton *button, uint16_t timeMs);
 void inputSetClickTime(myButton *button, uint16_t timeMs);
 void inputSetPressTime(myButton *button, uint16_t timeMs);
 void inputSetLongPressTime(myButton *button, uint16_t timeMs);
+uint8_t inputGetStatus(myButton *button);
+uint16_t inputGetClickCounter(myButton *button);
+uint32_t inputGetActiveTime(myButton *button);
+uint32_t inputGerDeactiveTime(myButton *button);
 #ifdef __cplusplus
 }
 #endif

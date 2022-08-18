@@ -24,8 +24,25 @@ void inputSetLongPressTime(myButton* button, uint16_t timeMs) {
     button->_proccessInfo.longPressTimeMs = timeMs;
 }
 
+uint8_t inputGetStatus(myButton* button) {
+    return button->_inputInfo.status.logicState;
+}
+
+uint16_t inputGetClickCounter(myButton* button) {
+    return button->_proccessInfo.lastMultiClickCounter;
+}
+
+uint32_t inputGetActiveTime(myButton* button) {
+    return button->_proccessInfo.activeTimeMs;
+}
+
+uint32_t inputGetDeactiveTime(myButton* button) {
+    return button->_proccessInfo.deactiveTimeMs;
+}
+
 void inputConfig(myButton* button, uint8_t activeLevel, v_callbackFunc inputInit, u8_callbackFunc getInputStatus, u32_callbackFunc getCurrentTickMs) {
     // button->attachClick = inputAttachClick;
+    // button->setClickTimeMs = button->_proccessInfo.clickTimeMs;
     if (button->_proccessInfo.debounceTimeMs == 0) button->_proccessInfo.debounceTimeMs = 50;
     if (button->_proccessInfo.clickTimeMs == 0) button->_proccessInfo.clickTimeMs = 400;
     if (button->_proccessInfo.endActionTimeMs == 0) button->_proccessInfo.endActionTimeMs = 600;
