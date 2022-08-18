@@ -10,36 +10,95 @@
  */
 
 #include "mybutton.h"
-
+/**
+ * @brief function to set debounce time
+ *
+ * @param button button need to be set debounce time
+ * @param timeMs time debounce in ms
+ */
 void inputSetDebounce(myButton* button, uint16_t timeMs) {
     button->_proccessInfo.debounceTimeMs = timeMs;
 }
+
+/**
+ * @brief function to set click time
+ *
+ * @param button button need to be set click time
+ * @param timeMs time click in ms
+ */
 void inputSetClickTime(myButton* button, uint16_t timeMs) {
     button->_proccessInfo.clickTimeMs = timeMs;
 }
+
+/**
+ * @brief function to set press time
+ *
+ * @param button button need to be set press time
+ * @param timeMs time press in ms
+ */
 void inputSetPressTime(myButton* button, uint16_t timeMs) {
     button->_proccessInfo.pressTimeMs = timeMs;
 }
+
+/**
+ * @brief function to set long press time
+ *
+ * @param button button need to be set long press time
+ * @param timeMs time long press in ms
+ */
 void inputSetLongPressTime(myButton* button, uint16_t timeMs) {
     button->_proccessInfo.longPressTimeMs = timeMs;
 }
 
+/**
+ * @brief function get current button level
+ *
+ * @param button button to get info
+ * @return uint8_t level
+ */
 uint8_t inputGetStatus(myButton* button) {
     return button->_inputInfo.status.logicState;
 }
 
+/**
+ * @brief function to get multi click counter
+ *
+ * @param button button to get info
+ * @return uint16_t counter value
+ */
 uint16_t inputGetClickCounter(myButton* button) {
     return button->_proccessInfo.lastMultiClickCounter;
 }
 
+/**
+ * @brief function to get recent button active time
+ *
+ * @param button button to get info
+ * @return uint32_t recent active time in ms
+ */
 uint32_t inputGetActiveTime(myButton* button) {
     return button->_proccessInfo.activeTimeMs;
 }
 
+/**
+ * @brief function to get recent button inactive time
+ *
+ * @param button button to get info
+ * @return uint32_t recent inactive time in ms
+ */
 uint32_t inputGetDeactiveTime(myButton* button) {
     return button->_proccessInfo.inactiveTimeMs;
 }
 
+/**
+ * @brief to config input as a button
+ *
+ * @param button name
+ * @param activeLevel level when this input active [0:1]
+ * @param inputInit function pointer to input init function
+ * @param getInputStatus function pointer to get input status function
+ * @param getCurrentTickMs function pointer to get current system tick ms function
+ */
 void inputConfig(myButton* button, uint8_t activeLevel, v_callbackFunc inputInit, u8_callbackFunc getInputStatus, u32_callbackFunc getCurrentTickMs) {
     // button->attachClick = inputAttachClick;
     // button->setClickTimeMs = button->_proccessInfo.clickTimeMs;
@@ -60,6 +119,11 @@ void inputConfig(myButton* button, uint8_t activeLevel, v_callbackFunc inputInit
     }
 }
 
+/**
+ * @brief function button proccess, put it in main loop
+ *
+ * @param button button name to checking
+ */
 void inputTick(myButton* button) {
     if (!(button->_inputInfo.status.inputConfigSuccess)) return;
 
@@ -143,22 +207,62 @@ void inputTick(myButton* button) {
         }
     }
 }
-
+/**
+ * @brief add function callback for click event
+ *
+ * @param button button added callback
+ * @param newFunction function callback
+ */
 void inputAttachClick(myButton* button, v_callbackFunc newFunction) {
     button->_event.ptrClickFn = newFunction;
 }
+
+/**
+ * @brief add function callback for double click event
+ *
+ * @param button button added callback
+ * @param newFunction function callback
+ */
 void inputAttachDoubleClick(myButton* button, v_callbackFunc newFunction) {
     button->_event.ptrDoubleClickFn = newFunction;
 }
+
+/**
+ * @brief add function callback for multi click event
+ *
+ * @param button button added callback
+ * @param newFunction function callback
+ */
 void inputAttachMultiClick(myButton* button, v_callbackFunc newFunction) {
     button->_event.ptrMultiClickFn = newFunction;
 }
+
+/**
+ * @brief add function callback for press event
+ *
+ * @param button button added callback
+ * @param newFunction function callback
+ */
 void inputAttachPress(myButton* button, v_callbackFunc newFunction) {
     button->_event.ptrPressFn = newFunction;
 }
+
+/**
+ * @brief add function callback for long press event
+ *
+ * @param button button added callback
+ * @param newFunction function callback
+ */
 void inputAttachLongPress(myButton* button, v_callbackFunc newFunction) {
     button->_event.ptrLongPressFn = newFunction;
 }
+
+/**
+ * @brief add function callback for long press release event
+ *
+ * @param button button added callback
+ * @param newFunction function callback
+ */
 void inputAttachDepress(myButton* button, v_callbackFunc newFunction) {
     button->_event.ptrLongPressReleaseFn = newFunction;
 }
