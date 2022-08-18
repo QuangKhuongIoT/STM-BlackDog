@@ -88,6 +88,10 @@ void inputAttachPress(myButton *button, v_callbackFunc newFunction);
 void inputAttachLongPress(myButton *button, v_callbackFunc newFunction);
 void inputAttachDepress(myButton *button, v_callbackFunc newFunction);
 
+void inputSetDebounce(myButton *button, uint16_t timeMs);
+void inputSetClickTime(myButton *button, uint16_t timeMs);
+void inputSetPressTime(myButton *button, uint16_t timeMs);
+void inputSetLongPressTime(myButton *button, uint16_t timeMs);
 #ifdef __cplusplus
 }
 #endif

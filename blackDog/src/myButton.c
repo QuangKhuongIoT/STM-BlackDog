@@ -11,6 +11,19 @@
 
 #include "mybutton.h"
 
+void inputSetDebounce(myButton* button, uint16_t timeMs) {
+    button->_proccessInfo.debounceTimeMs = timeMs;
+}
+void inputSetClickTime(myButton* button, uint16_t timeMs) {
+    button->_proccessInfo.clickTimeMs = timeMs;
+}
+void inputSetPressTime(myButton* button, uint16_t timeMs) {
+    button->_proccessInfo.pressTimeMs = timeMs;
+}
+void inputSetLongPressTime(myButton* button, uint16_t timeMs) {
+    button->_proccessInfo.longPressTimeMs = timeMs;
+}
+
 void inputConfig(myButton* button, uint8_t activeLevel, v_callbackFunc inputInit, u8_callbackFunc getInputStatus, u32_callbackFunc getCurrentTickMs) {
     // button->attachClick = inputAttachClick;
     if (button->_proccessInfo.debounceTimeMs == 0) button->_proccessInfo.debounceTimeMs = 50;
