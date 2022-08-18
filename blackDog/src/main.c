@@ -300,7 +300,7 @@ void doubleClickHandler() {
     ledBlink(2, 1000, 500);
 }
 void multiClickHandler() {
-    ledBlink(3, 1000, 500);
+    ledBlink(inputGetClickCounter(&btn1), 1000, 500);
 }
 void pressHandler() {
     ledBlink(4, 1000, 500);
