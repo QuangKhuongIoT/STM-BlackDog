@@ -18,9 +18,10 @@
 /* USER CODE END Header */
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
-
 /* Private includes ----------------------------------------------------------*/
+
 /* USER CODE BEGIN Includes */
+#include "myButton.h"
 
 /* USER CODE END Includes */
 
@@ -42,7 +43,12 @@
 RTC_HandleTypeDef hrtc;
 
 /* USER CODE BEGIN PV */
-
+myButton btn1;
+uint16_t ledBlinkTime = 0;
+uint16_t ledPeriodTime = 0;
+uint16_t ledDutyTime = 0;
+uint32_t ledStartBlink = 0;
+uint8_t ledStatus = 0;
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -50,7 +56,17 @@ void SystemClock_Config(void);
 static void MX_GPIO_Init(void);
 static void MX_RTC_Init(void);
 /* USER CODE BEGIN PFP */
-
+void btnInit();
+uint8_t btnGetStatus();
+void ledBlink();
+void ledLoop();
+uint32_t getCurrentTimeMs();
+void clickHandler();
+void doubleClickHandler();
+void multiClickHandler();
+void pressHandler();
+void longPressHandler();
+void depressHandler();
 /* USER CODE END PFP */
 
 /* Private user code ---------------------------------------------------------*/
@@ -59,55 +75,64 @@ static void MX_RTC_Init(void);
 /* USER CODE END 0 */
 
 /**
-  * @brief  The application entry point.
-  * @retval int
-  */
-int main(void)
-{
-  /* USER CODE BEGIN 1 */
-  uint32_t timeout;
+ * @brief  The application entry point.
+ * @retval int
+ */
+int main(void) {
+    /* USER CODE BEGIN 1 */
+    // uint32_t timeout;
 
-  /* USER CODE END 1 */
+    /* USER CODE END 1 */
 
-  /* MCU Configuration--------------------------------------------------------*/
+    /* MCU Configuration--------------------------------------------------------*/
 
-  /* Reset of all peripherals, Initializes the Flash interface and the Systick. */
-  HAL_Init();
+    /* Reset of all peripherals, Initializes the Flash interface and the Systick. */
+    HAL_Init();
 
-  /* USER CODE BEGIN Init */
+    /* USER CODE BEGIN Init */
 
-  /* USER CODE END Init */
+    /* USER CODE END Init */
 
-  /* Configure the system clock */
-  SystemClock_Config();
+    /* Configure the system clock */
+    SystemClock_Config();
 
-  /* USER CODE BEGIN SysInit */
+    /* USER CODE BEGIN SysInit */
 
-  /* USER CODE END SysInit */
+    /* USER CODE END SysInit */
 
-  /* Initialize all configured peripherals */
-  MX_GPIO_Init();
-  MX_RTC_Init();
-  /* USER CODE BEGIN 2 */
-  timeout = HAL_GetTick();
+    /* Initialize all configured peripherals */
+    MX_GPIO_Init();
+    MX_RTC_Init();
+    /* USER CODE BEGIN 2 */
+    // timeout = HAL_GetTick();
+    inputConfig(&btn1, 0, btnInit, btnGetStatus, getCurrentTimeMs);
+    inputAttachClick(&btn1, clickHandler);
+    inputAttachDoubleClick(&btn1, clickHandler);
+    inputAttachDoubleClick(&btn1, doubleClickHandler);
+    inputAttachMultiClick(&btn1, multiClickHandler);
+    inputAttachPress(&btn1, pressHandler);
+    inputAttachLongPress(&btn1, longPressHandler);
+    inputAttachDepress(&btn1, depressHandler);
+    ledBlink(3, 1000, 500);
+    /* USER CODE END 2 */
 
-  /* USER CODE END 2 */
+    /* Infinite loop */
+    /* USER CODE BEGIN WHILE */
+    while (1) {
+        /* USER CODE END WHILE */
+        // if (HAL_GetTick() - timeout > 1000ul) {
+        //     timeout = HAL_GetTick();
+        //     HAL_GPIO_TogglePin(LED_ONBOARD_GPIO_Port, LED_ONBOARD_Pin);
+        // }
+        // buttonLoop(&btn);
+        inputTick(&btn1);
+        ledLoop();
+        // HAL_Delay(1000);
+        // HAL_GPIO_TogglePin(LED_ONBOARD_GPIO_Port, LED_ONBOARD_Pin);
 
-  /* Infinite loop */
-  /* USER CODE BEGIN WHILE */
-  while (1)
-  {
-    /* USER CODE END WHILE */
-    if(HAL_GetTick() - timeout > 1000ul) {
-        timeout = HAL_GetTick();
-        HAL_GPIO_TogglePin(LED_ONBOARD_GPIO_Port, LED_ONBOARD_Pin);
+        /* USER CODE BEGIN 3 */
     }
-    // HAL_Delay(1000);
-    // HAL_GPIO_TogglePin(LED_ONBOARD_GPIO_Port, LED_ONBOARD_Pin);
-
-    /* USER CODE BEGIN 3 */
-  }
-  /* USER CODE END 3 */
+    /* USER CODE END 3 */
 }
 
 /**
@@ -222,6 +247,70 @@ static void MX_GPIO_Init(void)
 
 /* USER CODE BEGIN 4 */
 
+void btnInit() {
+    GPIO_InitTypeDef GPIO_InitStruct = {0};
+    GPIO_InitStruct.Pin = BTN_ONBOARD_Pin;
+    GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
+    GPIO_InitStruct.Pull = GPIO_PULLUP;
+    HAL_GPIO_Init(BTN_ONBOARD_GPIO_Port, &GPIO_InitStruct);
+}
+
+uint8_t btnGetStatus() {
+    if (HAL_GPIO_ReadPin(BTN_ONBOARD_GPIO_Port, BTN_ONBOARD_Pin) == GPIO_PIN_SET)
+        return 1;
+    else
+        return 0;
+}
+
+void ledBlink(int time, int period, int duty) {
+    ledBlinkTime = time;
+    ledPeriodTime = period;
+    ledDutyTime = duty;
+    ledStartBlink = HAL_GetTick();
+}
+
+void ledLoop() {
+    if (ledBlinkTime > 0) {
+        if ((HAL_GetTick() - ledStartBlink) < ledDutyTime) {
+            if (ledStatus != 1) {
+                HAL_GPIO_WritePin(LED_ONBOARD_GPIO_Port, LED_ONBOARD_Pin, 0);
+                ledStatus = 1;
+            }
+        } else {
+            if (ledStatus != 0) {
+                HAL_GPIO_WritePin(LED_ONBOARD_GPIO_Port, LED_ONBOARD_Pin, 1);
+                ledStatus = 0;
+            }
+        }
+        if ((HAL_GetTick() - ledStartBlink) > ledPeriodTime) {
+            ledBlinkTime--;
+            ledStartBlink = HAL_GetTick();
+        }
+    }
+}
+
+uint32_t getCurrentTimeMs() {
+    return HAL_GetTick();
+}
+
+void clickHandler() {
+    ledBlink(1, 1000, 500);
+}
+void doubleClickHandler() {
+    ledBlink(2, 1000, 500);
+}
+void multiClickHandler() {
+    ledBlink(3, 1000, 500);
+}
+void pressHandler() {
+    ledBlink(4, 1000, 500);
+}
+void longPressHandler() {
+    ledBlink(5, 1000, 500);
+}
+void depressHandler() {
+    ledBlink(6, 1000, 500);
+}
 /* USER CODE END 4 */
 
 /**
