@@ -17,9 +17,12 @@
 extern "C" {
 #endif
 
+struct _mybutton;
+
 typedef void (*v_callbackFunc)(void);
 typedef uint32_t (*u32_callbackFunc)(void);
 typedef uint8_t (*u8_callbackFunc)(void);
+typedef void (*v_callbackEvent)(struct _mybutton *, v_callbackFunc);
 
 typedef enum {
     EVENT_STT_UNKNOWN,
@@ -73,10 +76,12 @@ typedef struct
     v_callbackFunc ptrLongPressReleaseFn; /* Long press released trigger event function pointer */
 } event_t;
 
-typedef struct {
+typedef struct _mybutton {
     input_info_t _inputInfo;
     process_info_t _proccessInfo;
     event_t _event;
+
+    v_callbackEvent attachClick;
 } myButton;
 
 void inputConfig(myButton *button, uint8_t activeLevel, v_callbackFunc inputInit, u8_callbackFunc getInputStatus, u32_callbackFunc getCurrentTickMs);

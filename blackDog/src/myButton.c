@@ -100,8 +100,7 @@ uint32_t inputGetDeactiveTime(myButton* button) {
  * @param getCurrentTickMs function pointer to get current system tick ms function
  */
 void inputConfig(myButton* button, uint8_t activeLevel, v_callbackFunc inputInit, u8_callbackFunc getInputStatus, u32_callbackFunc getCurrentTickMs) {
-    // button->attachClick = inputAttachClick;
-    // button->setClickTimeMs = button->_proccessInfo.clickTimeMs;
+    button->attachClick = inputAttachClick;
     if (button->_proccessInfo.debounceTimeMs == 0) button->_proccessInfo.debounceTimeMs = 50;
     if (button->_proccessInfo.clickTimeMs == 0) button->_proccessInfo.clickTimeMs = 400;
     if (button->_proccessInfo.endActionTimeMs == 0) button->_proccessInfo.endActionTimeMs = 600;
