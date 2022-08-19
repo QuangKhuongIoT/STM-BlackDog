@@ -106,7 +106,8 @@ int main(void) {
     /* USER CODE BEGIN 2 */
     // timeout = HAL_GetTick();
     inputConfig(&btn1, 0, btnInit, btnGetStatus, getCurrentTimeMs);
-    inputAttachClick(&btn1, clickHandler);
+    // inputAttachClick(&btn1, clickHandler);
+    btn1.attachClick(&btn1, clickHandler);
     inputAttachDoubleClick(&btn1, clickHandler);
     inputAttachDoubleClick(&btn1, doubleClickHandler);
     inputAttachMultiClick(&btn1, multiClickHandler);
