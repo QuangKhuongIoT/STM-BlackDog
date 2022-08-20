@@ -2,7 +2,7 @@
  * @file myButton.h
  * @author Tran Quang Khuong (khuong.tranquang@gmail.com)
  * @brief
- * @version 0.1
+ * @version v1.0.0
  * @date 2022-08-17
  *
  * @copyright Copyright (c) 2022
