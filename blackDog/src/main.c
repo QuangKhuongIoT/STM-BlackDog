@@ -296,7 +296,9 @@ void ledLoop() {
             }
         }
         if ((HAL_GetTick() - ledStartBlink) > ledPeriodTime) {
-            ledBlinkTime--;
+            if (ledBlinkTime != 0xFF) {
+                ledBlinkTime--;
+            }
             ledStartBlink = HAL_GetTick();
         }
     }
