@@ -22,6 +22,7 @@
 
 /* USER CODE BEGIN Includes */
 #include "myButton.h"
+#include "myOutput.h"
 
 /* USER CODE END Includes */
 
@@ -36,7 +37,7 @@
 
 /* Private macro -------------------------------------------------------------*/
 /* USER CODE BEGIN PM */
-
+#define df_LED_OFF 1
 /* USER CODE END PM */
 
 /* Private variables ---------------------------------------------------------*/
@@ -44,6 +45,7 @@ RTC_HandleTypeDef hrtc;
 
 /* USER CODE BEGIN PV */
 myButton btn1;
+myOutput ledStt;
 uint16_t ledBlinkTime = 0;
 uint16_t ledPeriodTime = 0;
 uint16_t ledDutyTime = 0;
@@ -67,6 +69,9 @@ void multiClickHandler();
 void pressHandler();
 void longPressHandler();
 void depressHandler();
+
+void ledInit();
+void ledControl(output_status_t state);
 /* USER CODE END PFP */
 
 /* Private user code ---------------------------------------------------------*/
@@ -114,7 +119,13 @@ int main(void) {
     inputAttachPress(&btn1, pressHandler);
     inputAttachLongPress(&btn1, longPressHandler);
     inputAttachDepress(&btn1, depressHandler);
-    ledBlink(3, 1000, 500);
+
+    setOutputConfig(&ledStt, GPIO_PIN_RESET, ledInit, getCurrentTimeMs);
+    // setOutputPulse(&ledStt, 10, 400, 200);
+    setOutputPwm(&ledStt, 400, 200);
+    outputOnOff(&ledStt, ledControl);
+
+    // ledBlink(3, 1000, 500);
     /* USER CODE END 2 */
 
     /* Infinite loop */
@@ -128,6 +139,7 @@ int main(void) {
         // buttonLoop(&btn);
         inputTick(&btn1);
         ledLoop();
+        outputTick(&ledStt);
         // HAL_Delay(1000);
         // HAL_GPIO_TogglePin(LED_ONBOARD_GPIO_Port, LED_ONBOARD_Pin);
 
@@ -295,13 +307,20 @@ uint32_t getCurrentTimeMs() {
 }
 
 void clickHandler() {
-    ledBlink(1, 1000, 500);
+    // ledBlink(1, 1000, 500);
+    setOutputOnOff(&ledStt, OP_STT_OFF);
 }
 void doubleClickHandler() {
-    ledBlink(2, 1000, 500);
+    setOutputOnOff(&ledStt, OP_STT_ON);
+    // ledBlink(2, 1000, 500);
 }
 void multiClickHandler() {
-    ledBlink(inputGetClickCounter(&btn1), 1000, 500);
+    // ledBlink(inputGetClickCounter(&btn1), 1000, 500);
+    if (inputGetClickCounter(&btn1) == 3) {
+        setOutputPulse(&ledStt, 3, 400, 200);
+    } else if (inputGetClickCounter(&btn1) == 4) {
+        setOutputPwm(&ledStt, 400, 200);
+    }
 }
 void pressHandler() {
     ledBlink(4, 1000, 500);
@@ -312,6 +331,29 @@ void longPressHandler() {
 void depressHandler() {
     ledBlink(6, 1000, 500);
 }
+
+void ledInit() {
+    GPIO_InitTypeDef GPIO_InitStruct = {0};
+    /*Configure GPIO pin Output Level */
+    HAL_GPIO_WritePin(LED_ONBOARD_GPIO_Port, LED_ONBOARD_Pin, GPIO_PIN_RESET);
+
+    /*Configure GPIO pin : LED_ONBOARD_Pin */
+    GPIO_InitStruct.Pin = LED_ONBOARD_Pin;
+    GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
+    GPIO_InitStruct.Pull = GPIO_PULLUP;
+    GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_MEDIUM;
+    HAL_GPIO_Init(LED_ONBOARD_GPIO_Port, &GPIO_InitStruct);
+}
+
+void ledControl(output_status_t state) {
+    if (state == OP_STT_ON) {
+        HAL_GPIO_WritePin(LED_ONBOARD_GPIO_Port, LED_ONBOARD_Pin, GPIO_PIN_RESET);
+    }
+    if (state == OP_STT_OFF) {
+        HAL_GPIO_WritePin(LED_ONBOARD_GPIO_Port, LED_ONBOARD_Pin, GPIO_PIN_SET);
+    }
+}
+
 /* USER CODE END 4 */
 
 /**
