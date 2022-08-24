@@ -1,13 +1,12 @@
 #include "myOutput.h"
 
 /**
- * @brief
+ * @brief set configuration information of ouput channel
  *
- * @param output
- * @param mode
- * @param numOfPulse
- * @param period
- * @param duty
+ * @param output name of output object
+ * @param activeLevel logic level when activated
+ * @param initOutputFunc user output init function
+ * @param getCurrentTimeMsFunc user get system time in milisecond
  */
 void setOutputConfig(myOutput *output, uint8_t activeLevel, v_outputCallbackFunc initOutputFunc, u32_outputCallbackFunc getCurrentTimeMsFunc) {
     output->outputInfo.activeLevel = activeLevel;
@@ -23,8 +22,8 @@ void setOutputConfig(myOutput *output, uint8_t activeLevel, v_outputCallbackFunc
 /**
  * @brief Set the Output On Off object
  *
- * @param output
- * @param state
+ * @param output name of output object
+ * @param state output state
  */
 void setOutputOnOff(myOutput *output, output_status_t state) {
     output->outputInfo.mode = OP_MODE_ON_OFF;
@@ -36,10 +35,10 @@ void setOutputOnOff(myOutput *output, output_status_t state) {
 /**
  * @brief Set the Output Pulse object
  *
- * @param output
- * @param numOfPulse
- * @param period
- * @param duty
+ * @param output name of output object
+ * @param numOfPulse number of pulse
+ * @param period output pulse period
+ * @param duty output pulse duty
  */
 void setOutputPulse(myOutput *output, uint8_t numOfPulse, uint16_t period, uint16_t duty) {
     output->outputInfo.mode = OP_MODE_PULSE;
@@ -51,9 +50,9 @@ void setOutputPulse(myOutput *output, uint8_t numOfPulse, uint16_t period, uint1
 /**
  * @brief Set the Output Pwm object
  *
- * @param output
- * @param period
- * @param duty
+ * @param output name of output object
+ * @param period output pulse period
+ * @param duty output pulse duty
  */
 void setOutputPwm(myOutput *output, uint16_t period, uint16_t duty) {
     output->outputInfo.mode = OP_MODE_PWM;
@@ -64,8 +63,8 @@ void setOutputPwm(myOutput *output, uint16_t period, uint16_t duty) {
 /**
  * @brief
  *
- * @param output
- * @param newFunction
+ * @param output name of output object
+ * @param newFunction user output data function
  */
 void outputOnOff(myOutput *output, v_outputOnOffCallbackFunc newFunction) {
     output->outputEvent.ptrOnOffFn = newFunction;
@@ -74,8 +73,8 @@ void outputOnOff(myOutput *output, v_outputOnOffCallbackFunc newFunction) {
 /**
  * @brief
  *
- * @param output
- * @param newFunction
+ * @param output name of output object
+ * @param newFunction user output data function
  */
 void outputData(myOutput *output, v_outputDataCallbackFunc newFunction) {
     output->outputEvent.ptrDataFn = newFunction;
@@ -84,7 +83,7 @@ void outputData(myOutput *output, v_outputDataCallbackFunc newFunction) {
 /**
  * @brief
  *
- * @param output
+ * @param output name of output object
  */
 void outputTick(myOutput *output) {
     if (output->outputProccess.initSuccessFlag == 0) return;
